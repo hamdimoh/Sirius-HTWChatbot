@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, Column, Integer, String, Text, ForeignKey
@@ -31,7 +32,12 @@ class ChatMessage(Base):
 
 
 def connect_to_database():
-    db_uri = "mysql+mysqlconnector://root:REDACTED@localhost:3306/HTW"
+    db_user = os.getenv("DB_USER", "root")
+    db_password = os.getenv("DB_PASSWORD")
+    db_host = os.getenv("DB_HOST", "localhost")
+    db_port = os.getenv("DB_PORT", "3306")
+    db_name = os.getenv("DB_NAME", "HTW")
+    db_uri = f"mysql+mysqlconnector://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
     engine = create_engine(db_uri)
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
